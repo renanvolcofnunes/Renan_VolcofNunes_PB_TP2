@@ -1,7 +1,8 @@
 import csv
-from pathlib import Path
-
 import streamlit as st
+import re
+from pathlib import Path
+from collections import Counter
 
 
 st.set_page_config(page_title="Empregabilidade Jovem no Brasil",
@@ -120,6 +121,34 @@ if ARQUIVO_NOTICIAS.exists():
         st.markdown(f"[Ler notícia completa]({noticia['url']})")
         st.divider()
 
-else:
+    st.subheader("Palavras mais frequentes nas notícias")
+    texto = " ".join(noticia["titulo"] for noticia in noticias)
+    texto = texto.lower()
+    palavras = re.findall(r"[a-zà-ÿ]{4,}", texto)
+    palavras_vazias = ["para", "como", "entre", "mais", "menos", "sobre", "pela", "pelos", "pelas", "com", "uma", "esse", "essa"]
+    palavras_filtradas = [
+        palavra for palavra in palavras
+        if palavra not in palavras_vazias
+    ]
 
+    contagem = Counter(palavras_filtradas)
+    mais_frequentes = contagem.most_common(10)
+    frequencias = []
+
+    for palavra, quantidade in mais_frequentes:
+        frequencias.append({"palavra": palavra, "frequencia": quantidade})
+
+    if frequencias:
+        st.bar_chart(frequencias, x="palavra", y="frequencia")
+        st.caption(
+            "Frequência das palavras nos títulos das notícias "
+            "coletadas da Agência Brasil."
+        )
+
+    else:
+        st.info(
+            "Não há palavras disponíveis para análise."
+        )
+        
+else:
     st.warning("O arquivo de notícias não foi encontrado.")
