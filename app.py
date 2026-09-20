@@ -79,3 +79,17 @@ else:
 st.subheader("Resultados da Consulta")
 st.write("Quantidade de registros:", len(dados_filtrados))
 st.dataframe(dados_filtrados, width="stretch")
+
+st.subheader("Taxa de Desocupação dos Jovens por Estado")
+st.write(
+    "Comparação da taxa de desocupação dos jovens de 18 a 24 anos "
+    "entre os estados brasileiros, de acordo com os filtros selecionados."
+)
+
+if dados_filtrados:
+
+    st.bar_chart(dados_filtrados, x="estado", y="taxa_desocupacao")
+
+else:
+
+    st.warning("Não há dados disponíveis para os filtros selecionados.")
