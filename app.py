@@ -93,3 +93,33 @@ if dados_filtrados:
 else:
 
     st.warning("Não há dados disponíveis para os filtros selecionados.")
+
+st.subheader("Notícias sobre Empregabilidade Jovem")
+
+ARQUIVO_NOTICIAS = (BASE / "data" / "processed" / "noticias_empregabilidade.csv")
+
+noticias = []
+
+if ARQUIVO_NOTICIAS.exists():
+
+    with open(ARQUIVO_NOTICIAS, "r", encoding="utf-8-sig") as arquivo:
+
+        leitor = csv.DictReader(arquivo)
+
+        for linha in leitor:
+            noticias.append(linha)
+
+    st.write("Quantidade de notícias coletadas:", len(noticias))
+    st.dataframe(noticias, width="stretch")
+
+    for noticia in noticias:
+
+        st.markdown(f"**{noticia['titulo']}**")
+        st.write("Data:", noticia["data"][:10])
+        st.write("Fonte:", noticia["fonte"])
+        st.markdown(f"[Ler notícia completa]({noticia['url']})")
+        st.divider()
+
+else:
+
+    st.warning("O arquivo de notícias não foi encontrado.")
