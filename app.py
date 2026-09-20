@@ -1,6 +1,8 @@
 import csv
 import streamlit as st
 import re
+import io
+import hashlib
 from pathlib import Path
 from collections import Counter
 
@@ -87,6 +89,19 @@ else:
 st.subheader("Resultados da Consulta")
 st.write("Quantidade de registros:", len(dados_filtrados))
 st.dataframe(dados_filtrados, width="stretch")
+
+st.subheader("Download dos Indicadores")
+
+if dados_filtrados:
+    arquivo_saida = io.StringIO()
+    campos = list(dados_filtrados[0].keys())
+    escritor = csv.DictWriter(arquivo_saida, fieldnames=campos)
+    escritor.writeheader()
+    escritor.writerows(dados_filtrados)
+    st.download_button(label="Baixar indicadores em CSV", data=arquivo_saida.getvalue().encode("utf-8-sig"), file_name="indicadores_empregabilidade.csv", mime="text/csv")
+
+else:
+    st.info("Não há dados disponíveis para download.")
 
 st.subheader("Comparação de Estados")
 
@@ -197,3 +212,115 @@ if ARQUIVO_NOTICIAS.exists():
 
 else:
     st.warning("O arquivo de notícias não foi encontrado.")
+
+st.subheader("Adicionar Notícias Complementares")
+st.write("Envie um arquivo CSV com notícias sobre empregabilidade para complementar as informações do dashboard.")
+
+def validar_csv_noticias(conteudo):
+    if not conteudo:
+        return [], "O arquivo enviado está vazio."
+
+    texto = None
+
+    for codificacao in ["utf-8-sig", "utf-8", "latin-1"]:
+        try:
+            texto = conteudo.decode(codificacao)
+            break
+        except UnicodeDecodeError:
+            continue
+
+    if texto is None:
+        return [], "Não foi possível ler o arquivo."
+
+    try:
+        leitor = csv.DictReader(io.StringIO(texto), strict=True)
+
+        if leitor.fieldnames is None:
+            return [], "O CSV não possui cabeçalho."
+
+        colunas_obrigatorias = ["titulo", "data", "url", "fonte"]
+
+        faltantes = [
+            coluna for coluna in colunas_obrigatorias
+            if coluna not in leitor.fieldnames
+        ]
+
+        if faltantes:
+            return [], "Faltam colunas obrigatórias: " + ", ".join(faltantes)
+
+        linhas = []
+
+        for linha in leitor:
+
+            noticia = {}
+
+            for coluna in colunas_obrigatorias:
+
+                valor = linha.get(coluna)
+
+                if valor is None or not valor.strip():
+                    return [], f"A coluna '{coluna}' contém um valor vazio."
+
+                noticia[coluna] = valor.strip()
+
+            noticia["procedencia"] = "Upload"
+
+            linhas.append(noticia)
+
+        if not linhas:
+            return [], "O CSV não possui notícias."
+
+        return linhas, None
+
+    except (csv.Error, UnicodeError, ValueError):
+        return [], "Não foi possível interpretar o arquivo CSV."
+
+if "noticias_enviadas" not in st.session_state:
+    st.session_state.noticias_enviadas = []
+
+if "arquivos_enviados" not in st.session_state:
+    st.session_state.arquivos_enviados = []
+
+arquivo_enviado = st.file_uploader("Selecione um arquivo CSV:", type="csv")
+
+if arquivo_enviado is not None:
+
+    conteudo = arquivo_enviado.getvalue()
+    st.write("Arquivo:", arquivo_enviado.name)
+    st.write("Tamanho:", len(conteudo), "bytes")
+
+    if len(conteudo) > 2000000:
+        st.error("O arquivo deve ter no máximo 2 MB.")
+
+    else:
+
+        linhas, erro = validar_csv_noticias(conteudo)
+
+        if erro:
+            st.error(erro)
+
+        else:
+
+            st.success(f"Arquivo válido: {len(linhas)} notícias identificadas.")
+
+            if st.button("Adicionar notícias ao dashboard"):
+
+                identificador = hashlib.sha256(conteudo).hexdigest()
+
+                if identificador in st.session_state.arquivos_enviados:
+                    st.warning("Este arquivo já foi adicionado.")
+
+                else:
+
+                    st.session_state.noticias_enviadas.extend(linhas)
+                    st.session_state.arquivos_enviados.append(identificador)
+                    st.success("Notícias adicionadas com sucesso!")
+
+if st.session_state.noticias_enviadas:
+    st.subheader("Notícias Adicionadas pelo Usuário")
+    st.dataframe(st.session_state.noticias_enviadas, width="stretch")
+
+    if st.button("Limpar notícias enviadas"):
+        st.session_state.noticias_enviadas = []
+        st.session_state.arquivos_enviados = []
+        st.rerun()
