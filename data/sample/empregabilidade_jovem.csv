@@ -1,0 +1,28 @@
+﻿uf,estado,regiao,faixa_etaria,taxa_desocupacao,trimestre
+RO,Rondônia,Norte,18 a 24 anos,5.0,2º trimestre 2026
+AC,Acre,Norte,18 a 24 anos,16.1,2º trimestre 2026
+AM,Amazonas,Norte,18 a 24 anos,16.8,2º trimestre 2026
+RR,Roraima,Norte,18 a 24 anos,10.3,2º trimestre 2026
+PA,Pará,Norte,18 a 24 anos,12.5,2º trimestre 2026
+AP,Amapá,Norte,18 a 24 anos,23.1,2º trimestre 2026
+TO,Tocantins,Norte,18 a 24 anos,10.1,2º trimestre 2026
+MA,Maranhão,Nordeste,18 a 24 anos,13.3,2º trimestre 2026
+PI,Piauí,Nordeste,18 a 24 anos,19.0,2º trimestre 2026
+CE,Ceará,Nordeste,18 a 24 anos,16.3,2º trimestre 2026
+RN,Rio Grande do Norte,Nordeste,18 a 24 anos,12.8,2º trimestre 2026
+PB,Paraíba,Nordeste,18 a 24 anos,11.4,2º trimestre 2026
+PE,Pernambuco,Nordeste,18 a 24 anos,19.2,2º trimestre 2026
+AL,Alagoas,Nordeste,18 a 24 anos,18.8,2º trimestre 2026
+SE,Sergipe,Nordeste,18 a 24 anos,18.8,2º trimestre 2026
+BA,Bahia,Nordeste,18 a 24 anos,16.6,2º trimestre 2026
+MG,Minas Gerais,Sudeste,18 a 24 anos,8.3,2º trimestre 2026
+ES,Espírito Santo,Sudeste,18 a 24 anos,5.8,2º trimestre 2026
+RJ,Rio de Janeiro,Sudeste,18 a 24 anos,16.7,2º trimestre 2026
+SP,São Paulo,Sudeste,18 a 24 anos,12.2,2º trimestre 2026
+PR,Paraná,Sul,18 a 24 anos,5.7,2º trimestre 2026
+SC,Santa Catarina,Sul,18 a 24 anos,4.5,2º trimestre 2026
+RS,Rio Grande do Sul,Sul,18 a 24 anos,8.2,2º trimestre 2026
+MS,Mato Grosso do Sul,Centro-Oeste,18 a 24 anos,4.6,2º trimestre 2026
+MT,Mato Grosso,Centro-Oeste,18 a 24 anos,3.8,2º trimestre 2026
+GO,Goiás,Centro-Oeste,18 a 24 anos,7.8,2º trimestre 2026
+DF,Distrito Federal,Centro-Oeste,18 a 24 anos,15.0,2º trimestre 2026
