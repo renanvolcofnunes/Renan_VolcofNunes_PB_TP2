@@ -50,4 +50,32 @@ with open(ARQUIVO, "r", encoding="utf-8-sig") as arquivo:
         linha["taxa_desocupacao"] = float(linha["taxa_desocupacao"])
         dados.append(linha)
 
-st.dataframe(dados, use_container_width=True)
+st.subheader("Filtros de Empregabilidade")
+regioes = ["Todas"] + sorted(set(linha["regiao"] for linha in dados))
+regiao_selecionada = st.selectbox("Selecione uma região:", regioes)
+
+if regiao_selecionada == "Todas":
+    dados_regiao = dados
+else:
+    dados_regiao = [
+        linha for linha in dados
+        if linha["regiao"] == regiao_selecionada
+    ]
+
+estados = ["Todos"] + sorted(
+    set(linha["estado"] for linha in dados_regiao)
+)
+
+estado_selecionado = st.selectbox("Selecione um estado:", estados)
+
+if estado_selecionado == "Todos":
+    dados_filtrados = dados_regiao
+else:
+    dados_filtrados = [
+        linha for linha in dados_regiao
+        if linha["estado"] == estado_selecionado
+    ]
+
+st.subheader("Resultados da Consulta")
+st.write("Quantidade de registros:", len(dados_filtrados))
+st.dataframe(dados_filtrados, width="stretch")
