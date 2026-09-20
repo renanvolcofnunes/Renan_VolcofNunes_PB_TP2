@@ -86,3 +86,20 @@ Os principais stakeholders do projeto são:
 * Organizações do terceiro setor que desenvolvem projetos voltados para jovens e inserção no mercado de trabalho.
 * Instituições de ensino e capacitação profissional.
 * Jovens que buscam qualificação e oportunidades de entrada no mercado de trabalho.
+
+
+## 8. Evolução do Projeto no TP2
+
+Nesta etapa, o projeto de Empregabilidade Jovem no Brasil foi ampliado com novas funcionalidades para permitir maior interação dos usuários com os dados apresentados no dashboard.
+
+A aplicação desenvolvida em Python com Streamlit permite selecionar regiões e estados brasileiros, consultar indicadores de empregabilidade jovem e comparar as taxas de desocupação dos jovens de 18 a 24 anos entre diferentes unidades da federação.
+
+Além dos indicadores obtidos por meio da API do IBGE, foram incorporadas notícias relacionadas à empregabilidade jovem, coletadas da Agência Brasil utilizando Web Scraping com BeautifulSoup.
+
+As informações coletadas são armazenadas em arquivo CSV e apresentadas no dashboard, permitindo consultar títulos, datas, fontes e links das notícias, além de visualizar a frequência das palavras presentes nos títulos.
+
+A aplicação também permite que o usuário envie arquivos CSV com notícias complementares, consulte os dados adicionados e faça o download dos indicadores de empregabilidade conforme os filtros selecionados.
+
+Foram implementados mecanismos de cache para otimizar a leitura dos dados e estado de sessão para manter as escolhas dos usuários durante a utilização da aplicação.
+
+O projeto utiliza Git e GitHub para controle de versão e está publicado no Streamlit Community Cloud, permitindo o acesso à aplicação pela internet.
