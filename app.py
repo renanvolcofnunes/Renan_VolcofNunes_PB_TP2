@@ -42,14 +42,21 @@ st.subheader("Amostra dos Dados")
 BASE = Path(__file__).resolve().parent
 ARQUIVO = BASE / "data" / "sample" / "empregabilidade_jovem.csv"
 
-dados = []
+@st.cache_data(ttl=600)
+def carregar_dados(caminho):
 
-with open(ARQUIVO, "r", encoding="utf-8-sig") as arquivo:
-    leitor = csv.DictReader(arquivo)
+    dados = []
 
-    for linha in leitor:
-        linha["taxa_desocupacao"] = float(linha["taxa_desocupacao"])
-        dados.append(linha)
+    with open(caminho, "r", encoding="utf-8-sig") as arquivo:
+        leitor = csv.DictReader(arquivo)
+
+        for linha in leitor:
+            linha["taxa_desocupacao"] = float(linha["taxa_desocupacao"])
+            dados.append(linha)
+
+    return dados
+
+dados = carregar_dados(ARQUIVO)
 
 st.subheader("Filtros de Empregabilidade")
 regioes = ["Todas"] + sorted(set(linha["regiao"] for linha in dados))
@@ -80,6 +87,44 @@ else:
 st.subheader("Resultados da Consulta")
 st.write("Quantidade de registros:", len(dados_filtrados))
 st.dataframe(dados_filtrados, width="stretch")
+
+st.subheader("Comparação de Estados")
+
+if "ufs_comparacao" not in st.session_state:
+    st.session_state.ufs_comparacao = []
+
+opcoes_estados = {
+    linha["estado"]: linha["uf"]
+    for linha in dados_filtrados
+}
+
+if opcoes_estados:
+    estado_comparacao = st.selectbox("Selecione um estado para adicionar à comparação:", list(opcoes_estados.keys()))
+
+    if st.button("Adicionar à comparação"):
+        uf = opcoes_estados[estado_comparacao]
+
+        if uf not in st.session_state.ufs_comparacao:
+            st.session_state.ufs_comparacao.append(uf)
+
+if st.button("Limpar comparação"):
+    st.session_state.ufs_comparacao = []
+
+dados_comparacao = [
+    linha for linha in dados
+    if linha["uf"] in st.session_state.ufs_comparacao
+]
+
+if dados_comparacao:
+    st.write("Estados selecionados para comparação:")
+    st.dataframe(dados_comparacao, width="stretch")
+    st.bar_chart(dados_comparacao, x="estado", y="taxa_desocupacao")
+
+else:
+    st.info(
+        "Selecione um estado e clique em "
+        "'Adicionar à comparação'."
+    )
 
 st.subheader("Taxa de Desocupação dos Jovens por Estado")
 st.write(
@@ -149,6 +194,6 @@ if ARQUIVO_NOTICIAS.exists():
         st.info(
             "Não há palavras disponíveis para análise."
         )
-        
+
 else:
     st.warning("O arquivo de notícias não foi encontrado.")
