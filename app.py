@@ -324,3 +324,59 @@ if st.session_state.noticias_enviadas:
         st.session_state.noticias_enviadas = []
         st.session_state.arquivos_enviados = []
         st.rerun()
+
+st.subheader("Análise Conjunta das Notícias")
+
+noticias_completas = []
+urls_adicionadas = []
+
+for noticia in noticias + st.session_state.noticias_enviadas:
+
+    url = noticia["url"].strip()
+
+    if url not in urls_adicionadas:
+
+        urls_adicionadas.append(url)
+
+        linha = dict(noticia)
+
+        if "procedencia" not in linha:
+            linha["procedencia"] = "Coleta Web"
+
+        noticias_completas.append(linha)
+
+st.write("Quantidade total de notícias:", len(noticias_completas))
+
+if noticias_completas:
+
+    st.dataframe(noticias_completas, width="stretch")
+
+    texto_completo = " ".join(noticia["titulo"] for noticia in noticias_completas)
+    texto_completo = texto_completo.lower()
+    palavras = re.findall(r"[a-zà-ÿ]{4,}", texto_completo)
+    palavras_vazias = ["para", "como", "entre", "mais", "menos", "sobre", "pela", "pelos", "pelas", "com", "uma", "esse", "essa"]
+
+    palavras_filtradas = [
+        palavra for palavra in palavras
+        if palavra not in palavras_vazias
+    ]
+
+    contagem = Counter(palavras_filtradas)
+    mais_frequentes = contagem.most_common(10)
+
+    frequencias = []
+
+    for palavra, quantidade in mais_frequentes:
+
+        frequencias.append({"palavra": palavra, "frequencia": quantidade})
+
+    st.subheader("Palavras mais frequentes na análise conjunta")
+
+    if frequencias:
+        st.bar_chart(frequencias, x="palavra", y="frequencia")
+
+    else:
+        st.info("Não há palavras disponíveis para análise.")
+
+else:
+    st.info("Não há notícias disponíveis para análise.")
